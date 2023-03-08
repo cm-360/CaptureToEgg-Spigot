@@ -2,9 +2,11 @@ package com.github.cm360.capturetoegg.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +20,9 @@ import com.github.cm360.capturetoegg.events.EntityEggCaptureSuccessEvent;
 public class EntityEggCaptureAttemptListener implements Listener {
 
 	public static double catchChance = 0.05;
+	
+	public static boolean allowCatchingBabies = true;
+	public static boolean allowCatchingTamed = false;
 
 	@EventHandler
 	public void onEntityEggCaptureAttempt(EntityEggCaptureAttemptEvent event) {
@@ -34,6 +39,22 @@ public class EntityEggCaptureAttemptListener implements Listener {
 		}
 		
 		// TODO check permissions
+		
+		// Check if baby mobs are allowed
+		if (!allowCatchingBabies) {
+			if (target instanceof Ageable && !((Ageable) target).isAdult()) {
+				pm.callEvent(new EntityEggCaptureFailureEvent(target, egg, Reason.BABY));
+				return;
+			}
+		}
+		
+		// Check if tamed mobs are allowed
+		if (!allowCatchingTamed) {
+			if (target instanceof Tameable && ((Tameable) target).isTamed()) {
+				pm.callEvent(new EntityEggCaptureFailureEvent(target, egg, Reason.TAMED));
+				return;
+			}
+		}
 		
 		// Random chance for catching
 		if (Math.random() < catchChance) {

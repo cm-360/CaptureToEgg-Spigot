@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 
 public class EntityEggCaptureFailureEvent extends EntityEggCaptureEvent {
 
-	public enum Reason { CHANCE, NO_EGG, PERMISSION };
+	public enum Reason { CHANCE, NO_EGG, PERMISSION, BABY, TAMED };
 	
 	protected Reason reason;
 	

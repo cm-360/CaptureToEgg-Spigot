@@ -41,6 +41,12 @@ public class EntityEggCaptureFailureListener implements Listener {
 		case PERMISSION:
 			player.sendMessage(ChatColor.RED + String.format("You do not have permission to capture a %s!", entityName));
 			break;
+		case BABY:
+			player.sendMessage(ChatColor.RED + "You cannot capture baby mobs!");
+			break;
+		case TAMED:
+			player.sendMessage(ChatColor.RED + "You cannot capture tamed mobs!");
+			break;
 		default:
 			player.sendMessage(ChatColor.RED + String.format("Your attempt to capture the %s failed!", entityName));
 			break;
