@@ -2,14 +2,19 @@ package com.github.cm360.capturetoegg.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
+import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Steerable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 import com.github.cm360.capturetoegg.events.EntityEggCaptureSuccessEvent;
@@ -32,6 +37,30 @@ public class EntityEggCaptureSuccessListener implements Listener {
 		}
 		// Particles
 		doSuccessEffect(world, location);
+
+		// Drop saddle from steerables
+		if (target instanceof Steerable) {
+			if (((Steerable) target).hasSaddle()) {
+				world.dropItem(location, new ItemStack(Material.SADDLE, 1));
+			}
+		}
+
+		// Drop chest from donkey/mule
+		if (target instanceof ChestedHorse) {
+			if (((ChestedHorse) target).isCarryingChest()) {
+				world.dropItemNaturally(location, new ItemStack(Material.CHEST));
+			}
+		}
+
+		// Drop inventory items of entity
+		if (target instanceof InventoryHolder) {
+			ItemStack[] items = ((InventoryHolder) target).getInventory().getContents();
+			for (ItemStack itemStack : items) {
+				if (itemStack != null) {
+					world.dropItemNaturally(location, itemStack);
+				}
+			}
+		}
 
 		// Drop spawn egg item
 		world.dropItemNaturally(location, event.getResultStack());
