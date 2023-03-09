@@ -2,24 +2,23 @@ package com.github.cm360.capturetoegg.recipes;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.github.cm360.capturetoegg.main.CaptureToEggPlugin;
-
 import net.md_5.bungee.api.ChatColor;
 
 public class CaptureEggRecipe {
 
-	public static ShapedRecipe createCaptureEggRecipe(NamespacedKey key) {
+	public static ShapedRecipe createCaptureEggRecipe(NamespacedKey key, FileConfiguration config) {
 		ItemStack captureEgg = new ItemStack(Material.EGG);
 		ItemMeta im = captureEgg.getItemMeta();
 		
 		im.setDisplayName(ChatColor.RESET + "Capture Egg");
-		im.setCustomModelData(CaptureToEggPlugin.customModelData);
+		im.setCustomModelData(config.getInt("custom_model_data"));
 		im.addEnchant(Enchantment.DURABILITY, 0, true);
 		im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		captureEgg.setItemMeta(im);

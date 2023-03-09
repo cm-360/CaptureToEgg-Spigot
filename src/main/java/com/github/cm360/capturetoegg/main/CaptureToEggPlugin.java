@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Recipe;
@@ -18,7 +19,7 @@ import com.github.cm360.capturetoegg.recipes.CaptureEggRecipe;
 
 public class CaptureToEggPlugin extends JavaPlugin {
 
-	public static int customModelData = 2100;
+	protected FileConfiguration config;
 	
 	protected List<Listener> listeners;
 	
@@ -26,30 +27,43 @@ public class CaptureToEggPlugin extends JavaPlugin {
 	protected Recipe recipe;
 	
 	public CaptureToEggPlugin() {
-		listeners = new ArrayList<Listener>();
+		// Config
+		config = getConfig();
+		
 		// Create listeners
-		listeners.add(new EntityEggHitListener());
-		listeners.add(new EggThrownListener());
+		listeners = new ArrayList<Listener>();
+		listeners.add(new EntityEggHitListener(config));
+		listeners.add(new EggThrownListener(config));
 		listeners.add(new EntityEggCaptureAttemptListener());
 		listeners.add(new EntityEggCaptureSuccessListener());
 		listeners.add(new EntityEggCaptureFailureListener());
 		
-		// Register recipe
+		// Recipe key
 		recipeKey = NamespacedKey.fromString("capture_egg", this);
-		recipe = CaptureEggRecipe.createCaptureEggRecipe(recipeKey);
 	}
 	
 	@Override
 	public void onEnable() {
+		// Config
+		config.addDefault("custom_model_data", 2100);
+        config.options().copyDefaults(true);
+        saveConfig();
+		
+        // Register listeners
 		listeners.forEach(listener -> {
 			getServer().getPluginManager().registerEvents(listener, this);
 		});
-		getServer().addRecipe(recipe);
+		
+		// Create recipe
+		getServer().addRecipe(CaptureEggRecipe.createCaptureEggRecipe(recipeKey, config));
 	}
 	
 	@Override
 	public void onDisable() {
+		// Unregister listeners
 		HandlerList.unregisterAll(this);
+		
+		// Remove recipe
 		getServer().removeRecipe(recipeKey);
 	}
 
