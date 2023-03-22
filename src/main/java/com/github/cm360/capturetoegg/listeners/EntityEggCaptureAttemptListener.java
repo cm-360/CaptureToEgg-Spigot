@@ -65,7 +65,7 @@ public class EntityEggCaptureAttemptListener implements Listener {
 	}
 	
 	public ItemStack generateSpawnEgg(EntityType entityType) {
-		String spawnEggId = entityType.toString() + "_SPAWN_EGG";
+		String spawnEggId = convertEntityName(entityType.toString()) + "_SPAWN_EGG";
 		Material spawnEggMaterial = Material.getMaterial(spawnEggId);
 		
 		// TODO custom eggs for entities without a vanilla one
@@ -75,6 +75,15 @@ public class EntityEggCaptureAttemptListener implements Listener {
 		ItemStack spawnEggStack = new ItemStack(spawnEggMaterial);
 		
 		return spawnEggStack;
+	}
+	
+	private String convertEntityName(String entityName) {
+		switch (entityName) {
+		case "MUSHROOM_COW":
+			return "MOOSHROOM";
+		default:
+			return entityName;
+		}
 	}
 
 }
